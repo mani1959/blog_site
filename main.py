@@ -218,7 +218,6 @@ def edit_post(post_id):
 
 
 @app.route("/user_edit", methods=["GET", "POST"])
-@admin_only
 def user_edit():
     edit_form = UserEditForm()
     if edit_form.validate_on_submit():
