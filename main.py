@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from forms import LoginForm, RegisterForm, CreatePostForm, CommentForm
+from forms import LoginForm, RegisterForm, CreatePostForm, CommentForm, UserEditForm
 from flask_gravatar import Gravatar
 import os
 
@@ -212,6 +212,22 @@ def edit_post(post_id):
         return redirect(url_for("show_post", post_id=post.id))
 
     return render_template("make-post.html", form=edit_form, is_edit=True, current_user=current_user)
+
+
+@app.route("/user-edit/<email_id>", methods=["GET", "POST"])
+def edit_post(email_id):
+    user = User.query.filter_by(email=email_id).first()
+    edit_form = UserEditForm(
+        email=user.email,
+        name=user.name,
+        type=user.type
+    )
+    if edit_form.validate_on_submit():
+        user.type = edit_form.type.data
+        db.session.commit()
+        return redirect(url_for("user-edit", email_id=user.email))
+
+    return render_template("user-edit.html", form=edit_form, is_edit=True)
 
 
 @app.route("/delete/<int:post_id>")
