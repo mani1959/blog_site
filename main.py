@@ -214,8 +214,8 @@ def edit_post(post_id):
     return render_template("make-post.html", form=edit_form, is_edit=True, current_user=current_user)
 
 
-@app.route("/user-edit", methods=["GET", "POST"])
-def edit_post(email_id):
+@app.route("/user_edit", methods=["GET", "POST"])
+def user_edit():
     edit_form = UserEditForm()
     if edit_form.validate_on_submit():
         email_id = edit_form.emil.data
@@ -227,9 +227,9 @@ def edit_post(email_id):
         )
         user.type = 'Admin'
         db.session.commit()
-        return redirect(url_for("user-edit", email_id=user.email))
+        return redirect(url_for("user_edit", email_id=user.email))
 
-    return render_template("user-edit.html", form=edit_form, is_edit=True)
+    return render_template("user_edit.html", form=edit_form, is_edit=True)
 
 
 @app.route("/delete/<int:post_id>")
