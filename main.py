@@ -214,16 +214,18 @@ def edit_post(post_id):
     return render_template("make-post.html", form=edit_form, is_edit=True, current_user=current_user)
 
 
-@app.route("/user-edit/<email_id>", methods=["GET", "POST"])
+@app.route("/user-edit", methods=["GET", "POST"])
 def edit_post(email_id):
-    user = User.query.filter_by(email=email_id).first()
-    edit_form = UserEditForm(
-        email=user.email,
-        name=user.name,
-        type=user.type
-    )
+    edit_form = UserEditForm()
     if edit_form.validate_on_submit():
-        user.type = edit_form.type.data
+        email_id = edit_form.emil.data
+        user = User.query.filter_by(email=email_id).first()
+        edit_form = UserEditForm(
+            email=user.email,
+            name=user.name,
+            type='Admin'
+        )
+        user.type = 'Admin'
         db.session.commit()
         return redirect(url_for("user-edit", email_id=user.email))
 
