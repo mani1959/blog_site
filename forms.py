@@ -33,7 +33,7 @@ class CommentForm(FlaskForm):
 
 class UserEditForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired()])
-    password = PasswordField("Password")
+    # password = PasswordField("Password")
     name = StringField("Name", validators=[DataRequired()])
-    type = StringField("Name", validators=[DataRequired()])
+    type = StringField("Type", validators=[DataRequired()])
     submit = SubmitField("Update User")

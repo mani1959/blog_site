@@ -10,6 +10,8 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from forms import LoginForm, RegisterForm, CreatePostForm, CommentForm, UserEditForm
 from flask_gravatar import Gravatar
 import os
+from requests import request
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
@@ -19,6 +21,7 @@ gravatar = Gravatar(app, size=100, rating='g', default='retro', force_default=Fa
 
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -65,7 +68,7 @@ class Comment(db.Model):
     text = db.Column(db.Text, nullable=False)
 
 
-db.create_all()
+# db.create_all()
 
 
 def admin_only(f):
@@ -215,17 +218,13 @@ def edit_post(post_id):
 
 
 @app.route("/user_edit", methods=["GET", "POST"])
+@admin_only
 def user_edit():
     edit_form = UserEditForm()
     if edit_form.validate_on_submit():
-        email_id = edit_form.emil.data
+        email_id = edit_form.email.data
         user = User.query.filter_by(email=email_id).first()
-        edit_form = UserEditForm(
-            email=user.email,
-            name=user.name,
-            type='Admin'
-        )
-        user.type = 'Admin'
+        user.type = edit_form.type.data
         db.session.commit()
         return redirect(url_for("user_edit", email_id=user.email))
 
